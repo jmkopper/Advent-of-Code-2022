@@ -51,7 +51,7 @@ fn main() {
     for trio in trios.iter() {
         badges.push(get_badge(trio));
     }
-    println!("{:?}", badges);
+    
     let priorities: Vec<u32> = badges.iter().map(|x| item_priority(*x)).collect();
     println!("{:?}", priorities.iter().sum::<u32>());
 }
