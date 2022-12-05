@@ -33,7 +33,6 @@ fn parse_crane_diagram(diagram: &str) -> Vec<Vec<char>> {
     return stacks;
 }
 
-#[derive(Debug)]
 struct Instruction {
     quantity: usize,
     origin: usize,
@@ -79,10 +78,8 @@ fn main() {
     let file_parts: Vec<&str> = file_data.split("\n\n").collect();
     let mut stacks = parse_crane_diagram(file_parts[0]);
     let instructions = parse_instructions(file_parts[1].trim());
-    println!("{:?}", stacks);
     for instruction in instructions.iter() {
         perform_instruction(&instruction, &mut stacks);
     }
-    println!("{:?}", stacks);
     println!("{:?}", stack_tops(stacks));
 }
