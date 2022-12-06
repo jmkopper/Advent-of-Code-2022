@@ -1,19 +1,13 @@
 use std::collections::HashSet;
 
 fn is_marker(seq: &str, req_len: usize) -> bool {
-    let uniques: HashSet<char> = seq.chars().collect();
-    return uniques.len() == req_len;
+    seq.chars().collect::<HashSet<_>>().len() == req_len
 }
 
 fn find_marker_seq(data_stream: &str, req_len: usize) -> usize {
-    for i in 0..(data_stream.chars().count() - req_len - 1) {
-        let next_n = &data_stream[i..i + req_len];
-        if is_marker(next_n, req_len) {
-            return i + req_len
-        }
-    }
-
-    return 0;
+    (0..(data_stream.chars().count() - req_len - 1))
+        .find(|&i| is_marker(&data_stream[i..i + req_len], req_len))
+        .map_or(0, |i| i + req_len)
 }
 
 fn main() {
