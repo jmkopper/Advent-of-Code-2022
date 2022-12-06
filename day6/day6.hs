@@ -5,4 +5,4 @@ main :: IO ()
 main = do
     rawData <- readFile "input.txt"
     let n = 14
-    print $ head (filter (\y -> isMarker (take n (drop y rawData)) n) [1..length rawData - n]) + n
+    print $ head (filter (\y -> nub (take n (drop y rawData)) == take n (drop y rawData)) [1..length rawData - n]) + n
