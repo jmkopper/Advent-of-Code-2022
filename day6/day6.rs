@@ -1,4 +1,4 @@
-use ::std::collections::HashSet;
+use std::collections::HashSet;
 
 fn is_marker(seq: &str, req_len: usize) -> bool {
     let uniques: HashSet<char> = seq.chars().collect();
