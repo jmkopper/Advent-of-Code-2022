@@ -11,22 +11,16 @@ fn visible_from_start(trees: &Vec<u8>) -> Vec<u8> {
     visible
 }
 
-fn update_visible_row(visible: &mut Vec<Vec<u8>>, new_viz: &mut Vec<u8>, row: usize, reversed: bool) {
-    if reversed {
-        new_viz.reverse();
-    }
-    // let mut update_row = &mut visible[row];
-    for (i, v) in visible.into_iter().enumerate() {
-        visible[row][i] = std::cmp::max(v, new_viz[i]);
+fn update_visible_row(visible: &mut Vec<Vec<u8>>, new_viz: &mut Vec<u8>, row: usize) {
+    for i in 0..new_viz.len() {
+        visible[row][i] = std::cmp::max(new_viz[i], visible[row][i]);
     }
 }
 
-fn update_visible_col(visible: &mut Vec<Vec<u8>>, new_viz: &mut Vec<u8>, col: usize, reversed: bool) {
-    if reversed {
-        new_viz.reverse();
+fn update_visible_col(visible: &mut Vec<Vec<u8>>, new_viz: &mut Vec<u8>, col: usize) {
+    for i in 0..new_viz.len() {
+        visible[i][col] = std::cmp::max(new_viz[i], visible[i][col]);
     }
-    let update_col = visible;
-
 }
 
 fn main() {
