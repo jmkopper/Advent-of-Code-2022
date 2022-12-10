@@ -28,6 +28,4 @@ fn main() {
         }
         if draw_pos == 39 { println!() }
     }
-
-    print!("{}", sprite_pos[1..].len());
 }
