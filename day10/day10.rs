@@ -12,7 +12,7 @@ fn run_cmd(line: &str, cycles: &mut Vec<Vec<i32>>) {
 fn main() {
     let file_data = std::fs::read_to_string("input.txt").unwrap();
     let lines: Vec<&str> = file_data.trim().split("\n").collect();
-    let mut cycles = vec![vec![1,1]];
+    let mut cycles = vec![vec![1, 1]];
     for line in lines.iter() {
         run_cmd(line, &mut cycles);
     }
@@ -26,6 +26,8 @@ fn main() {
         } else {
             print!(".");
         }
-        if draw_pos == 39 { println!() }
+        if draw_pos == 39 {
+            println!()
+        }
     }
 }
