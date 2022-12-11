@@ -37,7 +37,7 @@ impl MonkeySet {
 
     fn modulus(&self) -> usize {
         let tests: Vec<usize> = self.monkeys.iter().map(|x| x.test).collect();
-        tests.iter().fold(1, |a: usize, x| a * x)
+        tests.iter().fold(1, |a, x| a * x)
     }
 }
 
