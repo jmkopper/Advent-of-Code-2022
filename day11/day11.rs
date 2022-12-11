@@ -12,11 +12,12 @@ struct MonkeySet {
 
 impl MonkeySet {
     fn do_turn(&mut self, monkey_id: usize) {
+        let modulus = self.modulus();
         let monkey = &mut self.monkeys[monkey_id];
         let mut item_adds: Vec<(usize, usize)> = Vec::new(); // Borrow checker weirdness
         for old in monkey.items.iter() {
             monkey.inspections += 1;
-            let new = (monkey.operation)(*old) % (11 * 7 * 3 * 5 * 17 * 13 * 19 * 2);
+            let new = (monkey.operation)(*old) % modulus;
             let target = match new % monkey.test {
                 0 => monkey.targets.0,
                 _ => monkey.targets.1,
@@ -32,6 +33,11 @@ impl MonkeySet {
 
     fn add_item(&mut self, monkey_id: usize, item: usize) {
         self.monkeys[monkey_id].items.push(item);
+    }
+
+    fn modulus(&self) -> usize {
+        let tests: Vec<usize> = self.monkeys.iter().map(|x| x.test).collect();
+        tests.iter().fold(1, |a: usize, x| a * x)
     }
 }
 
