@@ -39,7 +39,10 @@ fn make_monkey(monkey_str: &str) -> Monkey {
     let lines: Vec<&str> = monkey_str.trim().split("\n").collect();
     let mut item_str: Vec<&str> = lines[1].split(": ").collect();
     item_str = item_str[1].trim().split(", ").collect();
-    let items: Vec<usize> = item_str.into_iter().map(|x| x.parse::<usize>().unwrap()).collect();
+    let items: Vec<usize> = item_str
+        .into_iter()
+        .map(|x| x.parse::<usize>().unwrap())
+        .collect();
 
     let op_strs: Vec<&str> = lines[2].split("= ").collect();
     let op = op_from_str(op_strs[1]);
@@ -52,7 +55,13 @@ fn make_monkey(monkey_str: &str) -> Monkey {
     let false_str: Vec<&str> = lines[5].trim().split(" ").collect();
     let false_target = false_str.last().unwrap().parse::<usize>().unwrap();
 
-    Monkey { items: items, operation: op, test: test, targets: (true_target, false_target), inspections: 0 }
+    Monkey {
+        items: items,
+        operation: op,
+        test: test,
+        targets: (true_target, false_target),
+        inspections: 0,
+    }
 }
 
 fn op_from_str(op_str: &str) -> Box<dyn Fn(usize) -> usize> {
@@ -61,7 +70,7 @@ fn op_from_str(op_str: &str) -> Box<dyn Fn(usize) -> usize> {
         "*" => |x: usize, y: usize| -> usize { x * y },
         _ => |x: usize, y: usize| -> usize { x + y },
     };
-    
+
     if pieces[2] == "old" {
         return Box::new(move |x: usize| -> usize { op(x, x) });
     } else {
@@ -73,7 +82,9 @@ fn op_from_str(op_str: &str) -> Box<dyn Fn(usize) -> usize> {
 fn main() {
     let file_data = std::fs::read_to_string("input.txt").unwrap();
     let monkey_chunks: Vec<&str> = file_data.trim().split("\n\n").collect();
-    let mut monkeys = MonkeySet {monkeys: monkey_chunks.iter().map(|x| make_monkey(x)).collect()};
+    let mut monkeys = MonkeySet {
+        monkeys: monkey_chunks.iter().map(|x| make_monkey(x)).collect(),
+    };
 
     for _ in 0..10000 {
         for i in 0..monkeys.monkeys.len() {
