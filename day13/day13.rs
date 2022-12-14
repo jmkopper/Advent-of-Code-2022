@@ -1,5 +1,3 @@
-use std::os::windows::raw;
-
 #[derive(Debug, PartialEq, Eq, Ord)]
 enum NestedList {
     Number(usize),
@@ -23,15 +21,17 @@ impl PartialOrd for NestedList {
 
 fn matching_bracket_index(xs: &[String]) -> usize {
     let mut depth = 1;
-    let mut index = 1;
+    let mut i = 0;
     while depth > 0 {
-        if xs[index].as_str() == "]" {
+        if xs[i].as_str() == "]" {
             depth -= 1
         }
-        index += 1;
+        if xs[i].as_str() == "[" {
+            depth += 1;
+        }
+        i += 1;
     }
-
-    index
+    i
 }
 
 fn split_brackets_nums(xs: &str) -> Vec<String> {
@@ -53,81 +53,54 @@ fn split_brackets_nums(xs: &str) -> Vec<String> {
             current = format!("{}{}", current, c);
         }
     }
-
     res
 }
 
 fn split_str_to_nested(xs: &[String]) -> NestedList {
-    if xs[0] == "[" {
-        let mut nesteds: Vec<NestedList> = Vec::new();
-        let mut i = 0;
-        while i < xs.len() {
-            match xs[i].as_str() {
-                "[" => {
-                    let snd = i + matching_bracket_index(&xs[i..]);
-                    nesteds.push(split_str_to_nested(&xs[i+1..snd]));
-                    i = snd - 1;
-                }
-                "]" => {}
-                _ => {
-                    nesteds.push(NestedList::Number(xs[i].parse().unwrap()));
-                }
-            }
-            i += 1;
-        }
+    let mut nesteds: Vec<NestedList> = Vec::new();
+
+    if xs == ["[", "]"] {
+        return NestedList::List(nesteds);
     }
 
-    // weird recursion edge case
-    // if xs == ["[", "]"] {
-    //     return NestedList::List(vec![]);
-    // }
-
-
+    let mut i = 0;
+    while i < xs.len() {
+        match xs[i].as_str() {
+            "[" => {
+                let matching_idx = i + matching_bracket_index(&xs[i + 1..]);
+                let substr = &xs[i + 1..matching_idx];
+                nesteds.push(split_str_to_nested(&substr));
+                i = matching_idx - 1;
+            }
+            "]" => {}
+            _ => {
+                nesteds.push(NestedList::Number(xs[i].parse().unwrap()));
+            }
+        }
+        i += 1;
+    }
     NestedList::List(nesteds)
 }
 
 fn nested_from_str(xs: &str) -> NestedList {
-    if xs.starts_with('[') {
-        let xs = &xs[1..xs.len()-1];
-        let mut nesteds: Vec<NestedList> = Vec::new();
-        let mut depth = 0;
-        let mut index = 0;
-
-        if xs.len() == 0 {
-            return NestedList::List(nesteds);
-        }
-
-        for (i,c) in xs.chars().enumerate() {
-            match c {
-                '[' => depth += 1,
-                ']' => depth -= 1,
-                ',' if depth == 0 => {
-                    nesteds.push(nested_from_str(&xs[index..i]));
-                    index = i+1;
-                }
-                _ => {},
-            }
-        }
-
-        nesteds.push(nested_from_str(&xs[index..]));
-        return NestedList::List(nesteds);
-    } else {
-        return NestedList::Number(xs.parse().unwrap());
-    }
+    split_str_to_nested(&split_brackets_nums(xs))
 }
 
 fn main() {
     let raw_data = std::fs::read_to_string("input.txt").unwrap();
     let pair_blocks: Vec<&str> = raw_data.trim().split("\n\n").collect();
-    let packet_str: Vec<&str> = pair_blocks.iter().map(|x| x.split("\n").collect::<Vec<&str>>()).flatten().collect();
+    let packet_str: Vec<&str> = pair_blocks
+        .iter()
+        .map(|x| x.split("\n").collect::<Vec<&str>>())
+        .flatten()
+        .collect();
     let mut packets: Vec<NestedList> = packet_str.iter().map(|x| nested_from_str(x)).collect();
-    println!("{} xxx {:?} oooo {:?}", packet_str[0], packets[0], split_str_to_nested(&split_brackets_nums(&packet_str[0])));
-    
+
     let mut sum = 0;
     let mut i = 0;
     while i < packets.len() {
-        if packets[i] < packets[i+1] {
-            sum += 1 + i/2;
+        if packets[i] < packets[i + 1] {
+            sum += 1 + i / 2;
         }
         i += 2;
     }
@@ -152,5 +125,4 @@ fn main() {
     }
 
     println!("part 2: {}", pos2 * pos6);
-
 }
