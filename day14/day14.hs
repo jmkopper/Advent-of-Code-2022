@@ -52,12 +52,12 @@ caveFromRocks rocks = Cave { objects = foldl' (\g coord -> updateObjsGrid g (fst
 simulationStep :: Cave -> (Int, Int) -> (Cave, (Int, Int))
 simulationStep cave sc
     | below == Air = (moveSand cave sc (fst sc, snd sc + 1), (fst sc, snd sc + 1))
-    | belowLeft == Air = (moveSand cave sc (fst sc, snd sc + 1), (fst sc - 1, snd sc + 1))
-    | belowRight == Air = (moveSand cave sc (fst sc, snd sc + 1), (fst sc + 1, snd sc + 1))
+    | belowLeft == Air = (moveSand cave sc (fst sc - 1, snd sc + 1), (fst sc - 1, snd sc + 1))
+    | belowRight == Air = (moveSand cave sc (fst sc + 1, snd sc + 1), (fst sc + 1, snd sc + 1))
     | otherwise = (cave, sc)
     where
-        below = (objects cave !! snd sc) !! (fst sc + 1)
-        belowLeft = (objects cave !! (snd sc - 1)) !! (fst sc + 1)
+        below = (objects cave !! (snd sc + 1)) !! fst sc
+        belowLeft = (objects cave !! (snd sc + 1)) !! (fst sc - 1)
         belowRight = (objects cave !! (snd sc + 1)) !! (fst sc + 1)
 
 simulateGrain :: Cave -> (Int, Int) -> Cave
