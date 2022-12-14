@@ -7,14 +7,20 @@ fn parse_line(xs: &str) -> Vec<(usize, usize)> {
     }
     let mut rock_coords: Vec<(usize, usize)> = Vec::new();
 
-    for i in 0..coords.len()-1 {
-        if coords[i].0 == coords[i+1].0 {
-            let (ymin, ymax) = (std::cmp::min(coords[i].1, coords[i+1].1), std::cmp::max(coords[i].1, coords[i+1].1));
+    for i in 0..coords.len() - 1 {
+        if coords[i].0 == coords[i + 1].0 {
+            let (ymin, ymax) = (
+                std::cmp::min(coords[i].1, coords[i + 1].1),
+                std::cmp::max(coords[i].1, coords[i + 1].1),
+            );
             for y in ymin..=ymax {
                 rock_coords.push((coords[i].0, y)); // will add duplicates at end points /shrug
             }
         } else {
-            let (xmin, xmax) = (std::cmp::min(coords[i].0, coords[i+1].0), std::cmp::max(coords[i].0, coords[i+1].0));
+            let (xmin, xmax) = (
+                std::cmp::min(coords[i].0, coords[i + 1].0),
+                std::cmp::max(coords[i].0, coords[i + 1].0),
+            );
             for x in xmin..=xmax {
                 rock_coords.push((x, coords[i].1));
             }
@@ -33,7 +39,7 @@ enum Obj {
 #[derive(Debug)]
 struct Cave {
     objects: Vec<Vec<Obj>>,
-    sand_source: (usize, usize), 
+    sand_source: (usize, usize),
 }
 
 fn build_cave(rock_coords: &Vec<(usize, usize)>) -> Cave {
@@ -43,20 +49,23 @@ fn build_cave(rock_coords: &Vec<(usize, usize)>) -> Cave {
     let (miny, maxy) = (0, ys.iter().max().unwrap()); // force miny to zero because that's where the sand source is
 
     // Shift everything to save memory
-    let width = 3*(maxy - miny + 5); // really just needs to be wider than it is tall
-    let xshift = minx - width/3;
+    let width = 3 * (maxy - miny + 5); // really just needs to be wider than it is tall
+    let xshift = minx - width / 3;
     let mut cave_objs = vec![vec![Obj::Air; width]; maxy - miny + 5];
-    
+
     for (rock_x, rock_y) in rock_coords.iter() {
         cave_objs[*rock_y][rock_x - xshift] = Obj::Rock;
     }
-    
+
     // fill in the floor
     for i in 0..width {
         cave_objs[maxy + 2][i] = Obj::Rock;
     }
 
-    Cave{ objects: cave_objs, sand_source: (500-xshift, 0) }
+    Cave {
+        objects: cave_objs,
+        sand_source: (500 - xshift, 0),
+    }
 }
 
 fn simulate_sand_grain(cave: &mut Cave) -> bool {
@@ -80,19 +89,23 @@ fn simulate_sand_grain(cave: &mut Cave) -> bool {
         below_right = &cave.objects[sand_coord.1 + 1][sand_coord.0 + 1];
     }
 
-    
     if sand_coord == cave.sand_source {
         return true;
     }
-    
+
     cave.objects[sand_coord.1][sand_coord.0] = Obj::Sand;
-    return false
+    return false;
 }
 
 fn main() {
     let raw_data = std::fs::read_to_string("input.txt").unwrap();
     let lines: Vec<&str> = raw_data.split("\n").collect();
-    let rock_coords: Vec<(usize, usize)> = lines.into_iter().filter(|x| !x.is_empty()).map(|x| parse_line(x)).flatten().collect();
+    let rock_coords: Vec<(usize, usize)> = lines
+        .into_iter()
+        .filter(|x| !x.is_empty())
+        .map(|x| parse_line(x))
+        .flatten()
+        .collect();
     let mut cave = build_cave(&rock_coords);
     let mut count = 0;
     let mut t = false;
