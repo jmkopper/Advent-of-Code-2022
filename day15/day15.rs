@@ -1,6 +1,3 @@
-// use std::collections::HashSet;
-
-#[derive(Debug)]
 struct Sensor {
     location: (i64, i64),
     nearest_beacon: (i64, i64),
@@ -11,9 +8,8 @@ fn dist(a: (i64, i64), b: (i64, i64)) -> i64 {
     return (a.0 - b.0).abs() + (a.1 - b.1).abs()
 }
 
-// takes something of the form x=1234, y=456
 fn parse_coord_str(coord_str: &str) -> (i64, i64) {
-    let chunks: Vec<&str> = coord_str.split(", ").collect(); // ["x=123", "y=456"]
+    let chunks: Vec<&str> = coord_str.split(", ").collect();
     return (chunks[0][2..].parse().unwrap(), chunks[1][2..].parse().unwrap())
 }
 
