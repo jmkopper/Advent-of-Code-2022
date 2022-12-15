@@ -11,7 +11,7 @@ instance Show Obj where
     show Rock = "#"
     show Sand = "o"
 
-data Cave = Cave { objects :: [[Obj]], sandSource :: (Int, Int) }
+data Cave = Cave { objects :: [[Obj]], sandSource :: (Int, Int) } deriving Eq
 
 instance Show Cave where
     show cave = unlines (map show (objects cave))
@@ -45,7 +45,7 @@ caveFromRocks rocks = Cave { objects = foldl' (\g coord -> updateObjsGrid g (fst
     where
         xs = [fst a | a <- rocks]
         ys = [snd a | a <- rocks]
-        width = 3 * (maximum xs - minimum xs + 5)
+        width = 3 * (maximum ys - minimum ys + 5)
         xoffset = minimum xs - (width `div` 3)
         height = maximum ys + 1
 
@@ -66,22 +66,17 @@ simulateGrain cave sc
     | otherwise = simulateGrain newcave newsc
     where (newcave, newsc) = simulationStep cave sc
 
+simulateUntilSource :: Cave -> Int -> Int
+simulateUntilSource cave n
+    | newcave == cave = n
+    | otherwise = simulateUntilSource newcave (n+1)
+    where newcave = simulateGrain cave (sandSource cave)
+
+
 main :: IO ()
 main = do
-    rawData <- readFile "test.txt"
+    rawData <- readFile "input.txt"
     let lines = splitOn "\n" rawData
     let rocks = rockCoordFromLines lines
     let cave = caveFromRocks rocks
-    let (ncave, nsc) = simulationStep cave (fst $ sandSource cave, snd (sandSource cave) + 5)
-    let (tcave, tsc) = simulationStep ncave nsc
-    let (ucave, usc) = simulationStep tcave tsc
-    let (vcave, vsc) = simulationStep ucave usc
-    print $ cave
-    print $ simulationStep ncave nsc
-    print $ simulationStep tcave tsc
-    print $ simulationStep ucave usc
-    print $ simulationStep vcave vsc
-    print $ (objects cave !! 9) !! 20
-    print $ (objects ucave !! 9) !! 20
-    print $ (objects vcave !! 9) !! 20
-    -- print $ simulateGrain cave (sandSource cave)
+    print $ simulateUntilSource cave 1 -- computer lights on fire. works for the test case at least
