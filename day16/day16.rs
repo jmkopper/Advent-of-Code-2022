@@ -73,8 +73,9 @@ fn dists(graph: &Graph) -> HashMap<(usize, usize), usize> {
         for j in 0..graph.nodes.len() {
             for k in 0..graph.nodes.len() {
                 let triangle_dist = dists.get(&(i, k)).unwrap() + dists.get(&(j, k)).unwrap();
-                let new_dist = std::cmp::min(dists.get(&(i, j)).unwrap(), &triangle_dist);
-                dists.insert((i, j), *new_dist);
+                let new_dist = std::cmp::min(dists.get(&(i, j)).unwrap(), &triangle_dist).clone();
+                dists.insert((i, j), new_dist);
+                dists.insert((j, i), new_dist);
             }
         }
     }
@@ -137,14 +138,16 @@ fn main() {
     );
 
     let mut best = 0;
-
     for (a, ascore) in &memo {
         for (b, bscore) in &memo {
-            if !a.iter().any(|x| b.contains(x)) {
+            if ascore + bscore < best {
+                continue;
+            }
+            let aitems: HashSet<usize> = HashSet::from_iter(a.iter().cloned());
+            if !b.iter().any(|x| aitems.contains(x)) {
                 best = std::cmp::max(best, ascore+bscore);
             }
         }
     }
-
     println!("{:?}", best);
 }
