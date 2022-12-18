@@ -50,12 +50,11 @@ impl Cave {
     fn simulate_movement(&mut self, movement: Movement) -> bool {
         match movement {
             Movement::Left => {
-                if self
+                if !self
                     .moving_obj_coords
                     .iter()
                     .any(|x| x.0 == 0 || self.objects[x.1][x.0 - 1] == Obj::StoppedRock)
                 {
-                } else {
                     self.moving_obj_coords = self
                         .moving_obj_coords
                         .iter()
@@ -64,10 +63,9 @@ impl Cave {
                 }
             }
             Movement::Right => {
-                if self.moving_obj_coords.iter().any(|x| {
+                if !self.moving_obj_coords.iter().any(|x| {
                     x.0 == self.width - 1 || self.objects[x.1][x.0 + 1] == Obj::StoppedRock
                 }) {
-                } else {
                     self.moving_obj_coords = self
                         .moving_obj_coords
                         .iter()
@@ -209,7 +207,7 @@ fn main() {
         width: 7,
         highest_rock: 0,
     };
-    let patterns = cave.simulate(&instructions, 10000);
+    let patterns = cave.simulate(&instructions, 2022);
     println!("{:?}", patterns);
-    println!("{:?}", cave.highest_rock); //finish part 2 by hand using `patterns`
+    println!("{:?}", cave.highest_rock);
 }
