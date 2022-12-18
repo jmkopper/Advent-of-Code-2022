@@ -26,10 +26,20 @@ fn surface_area(coords: &Vec<Vec<i64>>) -> i64 {
     area
 }
 
-fn free_neighbors(pos: &Vec<i64>, droplet: &HashSet<Vec<i64>>, min: &Vec<i64>, max: &Vec<i64>) -> Vec<Vec<i64>> {
+fn free_neighbors(
+    pos: &Vec<i64>,
+    droplet: &HashSet<Vec<i64>>,
+    min: &Vec<i64>,
+    max: &Vec<i64>,
+) -> Vec<Vec<i64>> {
     let mut free_neighbors: Vec<Vec<i64>> = Vec::new();
     for neighbor in neighbors(pos).iter() {
-        if !droplet.contains(neighbor) && neighbor.iter().enumerate().all(|(i, &x)| x <= max[i] && x >= min[i]) {
+        if !droplet.contains(neighbor)
+            && neighbor
+                .iter()
+                .enumerate()
+                .all(|(i, &x)| x <= max[i] && x >= min[i])
+        {
             free_neighbors.push(neighbor.to_vec());
         }
     }
@@ -58,10 +68,6 @@ fn find_interior(coords: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {
         }
     }
 
-    // let found = visited.len() as i64;
-    // let volume = (max[0] - min[0] + 1) * (max[1] - min[1] + 1) * (max[2] - min[2] + 1);
-    // let droplet_volume = droplet.len() as i64;
-
     let mut interior: Vec<Vec<i64>> = Vec::new();
     for i in 0..max[0] {
         for j in 0..max[1] {
@@ -87,5 +93,5 @@ fn main() {
     println!("part 1 {:?}", total_area);
     let interior = find_interior(&coords);
     let interior_area = surface_area(&interior);
-    println!("part 2 {:?}", total_area-interior_area);
+    println!("part 2 {:?}", total_area - interior_area);
 }
