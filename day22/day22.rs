@@ -187,16 +187,6 @@ fn navigate_cave(
     return (pos, facing, face);
 }
 
-fn password(dir: Dir, pos: (usize, usize)) -> usize {
-    let facing_val = match dir {
-        Dir::Right => 0,
-        Dir::Down => 1,
-        Dir::Left => 2,
-        Dir::Up => 3,
-    };
-    return (pos.0 + 1) * 1000 + 4 * (pos.1 + 1) + facing_val;
-}
-
 fn next_face(start_face: usize, start_dir: Dir) -> (usize, Dir) {
     if start_face == 0 {
         match start_dir {
@@ -265,6 +255,5 @@ fn main() {
 
     let (pos, facing, face) = navigate_cave(&faces, &instructions);
     println!("{:?} {:?} {}", pos, facing, face);
-    println!("{:?}", password(facing, pos));
     // compute manually from here, you loser
 }
