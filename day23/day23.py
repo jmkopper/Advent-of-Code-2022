@@ -52,16 +52,6 @@ def run_until_done(elves, width, height):
         dir_order.append(fst)
     return count
 
-
-def print_grid(elves, width, height):
-    for row in range(height):
-        for col in range(width):
-            if (row, col) in elves:
-                print('#', end='')
-            else:
-                print('.', end='')
-        print()
-
 def score_grid(elves):
     rows = [e[0] for e in elves]
     cols = [e[1] for e in elves]
