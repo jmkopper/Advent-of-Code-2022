@@ -18,4 +18,4 @@ toSnafu n k = toSnafu (n `div` 5) (snd z) ++ fst z
 main :: IO ()
 main = do
     rawData <- readFile "input.txt"
-    print $ toSnafu (sum (map toDec (splitOn "\n" rawData))) 0
+    putStrLn $ toSnafu (sum (map toDec (splitOn "\n" rawData))) 0
